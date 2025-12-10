@@ -4,6 +4,9 @@ on:
   push:
     branches: [ main ]
 
+env:
+  GITHUB_USERNAME_LOWERCASE: ${{ lower(github.actor) }}
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -20,7 +23,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker image
-        run: docker build -t ghcr.io/abubakar022/gen_ai:latest .
+        run: docker build -t ghcr.io/${{ env.GITHUB_USERNAME_LOWERCASE }}/gen_ai:latest .
 
       - name: Push Docker image to GHCR
-        run: docker push ghcr.io/abubakar022/gen_ai:latest
+        run: docker push ghcr.io/${{ env.GITHUB_USERNAME_LOWERCASE }}/gen_ai:latest
