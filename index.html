@@ -62,14 +62,22 @@
       promptInput.value = '';
 
       try {
-        const res = await fetch('http://localhost:8080/generate', {  // change URL if needed
+        const res = await fetch('http://localhost:8080/api/chat', {  // match your backend endpoint
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt })
+          body: JSON.stringify({
+            messages: [{ role: 'user', content: prompt }],
+            model: 'gemini-small'
+          })
         });
 
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
-        appendMessage('Bot', data.response || 'No response', 'bot');
+
+        // Gemini API may return different structures; adjust if needed
+        const botMessage = data?.output?.[0]?.content || data?.response || 'No response';
+        appendMessage('Bot', botMessage, 'bot');
+
       } catch (err) {
         console.error(err);
         appendMessage('Bot', 'Error connecting to backend', 'bot');
@@ -84,7 +92,7 @@
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    // Optional: send message on Enter key
+    // Send on Enter key
     promptInput.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') sendPrompt();
     });
