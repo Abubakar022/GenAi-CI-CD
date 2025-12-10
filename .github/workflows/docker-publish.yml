@@ -2,18 +2,16 @@ name: Build and Publish Docker Image
 
 on:
   push:
-    branches: [ main ]  # triggers workflow when you push to main branch
+    branches: [ main ]
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout your repo code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Login to GitHub Container Registry
       - name: Log in to GHCR
         uses: docker/login-action@v2
         with:
@@ -21,10 +19,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 3️⃣ Build Docker image (use lowercase for username)
       - name: Build Docker image
         run: docker build -t ghcr.io/abubakar022/gen_ai:latest .
 
-      # 4️⃣ Push Docker image to GHCR
-      - name: Push Docker image
+      - name: Push Docker image to GHCR
         run: docker push ghcr.io/abubakar022/gen_ai:latest
